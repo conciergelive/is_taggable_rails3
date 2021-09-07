@@ -1,14 +1,17 @@
 # frozen_string_literal: true
 
 require "bundler/gem_tasks"
+require "rake/testtask"
 
-task default: %i[test]
-
-task :test do
-  sh "bundle exec ruby -Ilib:test test/*_test.rb"
+Rake::TestTask.new do |t|
+  t.libs << "test"
+  t.test_files = Dir["test/*_test.rb"]
+  t.verbose = true
 end
 
-task :release, %i[release] => %i[
+task default: %i(test)
+
+task :release, %i(release) => %i(
   build
   release:rubygem_push
-]
+)
