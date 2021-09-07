@@ -1,5 +1,5 @@
-require 'tag'
-require 'tagging'
+require 'is_taggable/tag'
+require 'is_taggable/tagging'
 
 module IsTaggable
   class TagList < Array
