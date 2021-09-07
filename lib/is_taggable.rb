@@ -1,16 +1,16 @@
-require 'is_taggable/tag'
-require 'is_taggable/tagging'
+require 'tag'
+require 'tagging'
 
 module IsTaggable
   class TagList < Array
     cattr_accessor :delimiter
     @@delimiter = ','
-    
+
     def initialize(list)
       list = list.is_a?(Array) ? list : list.split(@@delimiter).collect(&:strip).reject(&:blank?)
       super
     end
-    
+
     def to_s
       join(@@delimiter)
     end
@@ -35,12 +35,13 @@ module IsTaggable
       klass.class_eval do
         include IsTaggable::TaggableMethods::InstanceMethods
 
-        has_many   :taggings, :as      => :taggable, :dependent => :destroy
-        has_many   :tags,     :through => :taggings
+        has_many :taggings, :as => :taggable, :dependent => :destroy
+        has_many :tags, :through => :taggings
+
         after_save :save_tags
 
-        tag_kinds.each do |k|
-          define_method("#{k}_list")  { get_tag_list(k) }
+        self.tag_kinds.each do |k|
+          define_method("#{k}_list") { get_tag_list(k) }
           define_method("#{k}_list=") { |new_list| set_tag_list(k, new_list) }
           define_method("#{k}_list_will_change!") { tag_list_will_change_for_kind!(k) }
           define_method("#{k}_list_changed?") { tag_list_changed_for_kind?(k) }
@@ -107,12 +108,14 @@ module IsTaggable
         end
 
         def delete_unused_tags(tag_kind)
-          tags.of_kind(tag_kind).each { |t| tags.delete(t) unless get_tag_list(tag_kind).include?(t.name) }
+          tags.of_kind(tag_kind).each do |t|
+            tags.delete(t) unless get_tag_list(tag_kind).include?(t.name)
+          end
         end
 
         def add_new_tags(tag_kind)
           get_tag_list(tag_kind).each do |tag_name|
-            tag = IsTaggable::Tag.find_or_initialize_with_name_like_and_kind(tag_name, tag_kind)
+            tag = Tag.find_or_initialize_with_name_like_and_kind(tag_name, tag_kind)
             tags << tag unless tags.include?(tag)
           end
           # Remember the normalized tag names.

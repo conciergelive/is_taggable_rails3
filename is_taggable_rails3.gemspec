@@ -1,47 +1,22 @@
+require_relative './lib/is_taggable/version'
+
 Gem::Specification.new do |s|
-  s.name = %q{is_taggable_rails3}
-  s.version = "0.4.0"
+  s.name = "is_taggable_rails3"
+  s.version = IsTaggable::VERSION
 
-  s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
+  s.required_ruby_version = Gem::Requirement.new(">= 2.1")
   s.authors = ["Martin Emde", "Daniel Haran", "James Golick", "GiraffeSoft Inc.", "Ben Johnson", "Drew Ulmer"]
-  s.date = %q{2009-09-12}
-  s.email = %q{martin.emde@gmail.com}
-  s.extra_rdoc_files = [
-    "LICENSE",
-    "README.rdoc",
-  ]
-  s.files = [
-    ".gitignore",
-    "LICENSE",
-    "README.rdoc",
-    "VERSION.yml",
-    "generators/is_taggable_migration/is_taggable_migration_generator.rb",
-    "generators/is_taggable_migration/templates/migration.rb",
-    "init.rb",
-    "is_taggable.gemspec",
-    "lib/is_taggable.rb",
-    "lib/tag.rb",
-    "lib/tagging.rb",
-    "rakefile",
-    "test/is_taggable_test.rb",
-    "test/tag_test.rb",
-    "test/tagging_test.rb",
-    "test/test_helper.rb",
-  ]
-  s.homepage = %q{http://github.com/conciergelive/is_taggable_rails3}
-  s.rdoc_options = ["--charset=UTF-8"]
+  s.email = ["martin.emde@gmail.com", "dulmer@conciergelive.com"]
+  s.files = Dir["lib/**/*"]
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.3.5}
+  s.homepage = "https://github.com/conciergelive/is_taggable_rails3"
+  s.license = "MIT"
+  s.description = %q{Rails 3 patched version of is_taggable}
   s.summary = %q{Rails 3 patched version of is_taggable}
-  s.test_files = [
-    "test/is_taggable_test.rb",
-    "test/tag_test.rb",
-    "test/tagging_test.rb",
-    "test/test_helper.rb",
-  ]
 
-  if s.respond_to? :specification_version
-    current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION
-    s.specification_version = 3
-  end
+  s.add_development_dependency 'activerecord', '~> 3.2'
+  s.add_development_dependency 'activesupport', '~> 3.2'
+  s.add_development_dependency 'sqlite3', '~> 1.3.5'
+  s.add_development_dependency 'minitest'
+  s.add_development_dependency 'pry'
 end

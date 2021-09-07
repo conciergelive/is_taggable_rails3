@@ -1,12 +1,18 @@
+# frozen_string_literal: true
+
 $:.unshift File.expand_path('../lib', File.dirname(__FILE__))
 
 require 'active_record'
-require 'is_taggable'
-require 'expectations'
+require 'active_support'
+require 'is_taggable_rails3'
+require 'minitest/autorun'
 require 'logger'
+require 'pry'
 
-ActiveRecord::Base.configurations = {'sqlite3' => {:adapter => 'sqlite3', :database => ':memory:'}}
-ActiveRecord::Base.establish_connection('sqlite3')
+ActiveRecord::Base.establish_connection(
+  :adapter => 'sqlite3',
+  :database => ':memory:',
+)
 
 ActiveRecord::Base.logger = Logger.new(STDERR)
 ActiveRecord::Base.logger.level = Logger::WARN
@@ -14,7 +20,7 @@ ActiveRecord::Base.logger.level = Logger::WARN
 ActiveRecord::Schema.define(:version => 0) do
   create_table :comments do |t|
   end
-  
+
   create_table :posts do |t|
     t.string  :title, :default => ''
   end
