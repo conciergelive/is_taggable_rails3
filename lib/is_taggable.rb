@@ -75,6 +75,10 @@ module IsTaggable
         end
 
         def tag_list_changed_for_kind?(kind)
+          if !instance_variable_defined?(tag_list_changed_name_for_kind(kind))
+            instance_variable_set(tag_list_changed_name_for_kind(kind), nil)
+          end
+
           instance_variable_get(tag_list_changed_name_for_kind(kind))
         end
 
@@ -87,6 +91,9 @@ module IsTaggable
         end
 
         def tag_list_instance_variable(kind)
+          if !instance_variable_defined?(tag_list_name_for_kind(kind))
+            instance_variable_set(tag_list_name_for_kind(kind), nil)
+          end
           instance_variable_get(tag_list_name_for_kind(kind))
         end
 

@@ -1,41 +1,52 @@
 require 'test_helper'
 
-Expectations do
-  expect Tagging do
+class TagTest < Minitest::Test
+  def teardown
+    Tag.destroy_all
+  end
+
+  def test_association
     t = Tag.new
     if t.respond_to?(:association)
-      t.association(:taggings).reflection.klass
+      assert_equal Tagging, t.association(:taggings).reflection.klass
     else
-      t.taggings.proxy_reflection.klass
+      assert_equal Tagging, t.taggings.proxy_reflection.klass
     end
   end
 
-  expect Tag.new(:name => "duplicate").not.to.be.valid? do
+  def test_duplicate_invalid
     Tag.create!(:name => "duplicate")
+    refute Tag.new(:name => "duplicate").valid?
   end
 
-  expect Tag.new(:name => "not dup").to.be.valid? do
-    Tag.create!(:name => "not dup", :kind => "something")
+  def test_dupes_across_kinds
+    assert Tag.create!(:name => "not dup", :kind => "something")
+    assert Tag.new(:name => "not dup").valid?
   end
 
-  expect Tag.new.not.to.be.valid?
-  expect String do
+  def test_tag_requires_name
+    refute Tag.new.valid?
+  end
+
+  def test_tag_errors
     t = Tag.new
     t.valid?
     m = t.errors[:name]
-    m.is_a?(Array) ? m.first : m
+    assert_equal String, m.is_a?(Array) ? m.first.class : m.class
   end
 
-  expect Tag.create!(:name => "iamawesome", :kind => "awesomestuff") do
-    Tag.find_or_initialize_with_name_like_and_kind("iaMawesome", "awesomestuff")
+  def test_find_or_initialize_with_name_like_and_kind
+    tag = Tag.create!(:name => "iamawesome", :kind => "awesomestuff")
+    assert_equal tag.id, Tag.find_or_initialize_with_name_like_and_kind("iaMawesome", "awesomestuff").id
   end
 
-  expect true do
-    Tag.create!(:name => "iamawesome", :kind => "stuff")
-    Tag.find_or_initialize_with_name_like_and_kind("iaMawesome", "otherstuff").new_record?
+  def test_creating_and_finding_tag
+    tag = Tag.create!(:name => "iamawesome", :kind => "stuff")
+    assert Tag.find_or_initialize_with_name_like_and_kind("iaMawesome", "otherstuff").new_record?
   end
 
-  expect Tag.create!(:kind => "language", :name => "french") do
-    Tag.of_kind("language").first
+  def test_create_tag_and_find_by_kind
+    tag = Tag.create!(:kind => "language", :name => "french")
+    assert_equal tag.id, Tag.of_kind("language").first.id
   end
 end

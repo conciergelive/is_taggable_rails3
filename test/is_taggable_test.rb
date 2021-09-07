@@ -1,6 +1,11 @@
 require 'test_helper'
 
 class IsTaggableTest < Minitest::Test
+  def teardown
+    Post.destroy_all
+    Tag.destroy_all
+  end
+
   def test_build
     assert_equal Tag, Post.new.tags.build.class
   end
@@ -36,13 +41,13 @@ class IsTaggableTest < Minitest::Test
     assert_equal ["something cool", "something new"], p.tag_list
   end
 
-  # def test_direct_var_setting
-  #   p = Post.new :language_list => "english, french"
-  #   p.save!
-  #   p.tags.reload
-  #   p.instance_variable_set("@language_list", nil)
-  #   assert_equal ["english", "french"], p.language_list
-  # end
+  def test_direct_var_setting
+    p = Post.new :language_list => "english, french"
+    p.save!
+    p.tags.reload
+    p.instance_variable_set("@language_list", nil)
+    assert_equal ["english", "french"], p.language_list
+  end
 
   def test_spaces_support
     p = Post.new :language_list => "english, french"
@@ -63,13 +68,13 @@ class IsTaggableTest < Minitest::Test
     assert_equal ["spaces","should","not","matter"], p.tag_list.to_a
   end
 
-  # def test_blank_tags
-  #   p = Post.new
-  #   p.tag_list = "blank, topics, should be ignored, "
-  #   p.save!
-  #   p.tags.reload
-  #   assert_equal ["blank","topics","should be ignored"], p.tag_list.to_a
-  # end
+  def test_blank_tags
+    p = Post.new
+    p.tag_list = "blank, topics, should be ignored, "
+    p.save!
+    p.tags.reload
+    assert_equal ["blank","topics","should be ignored"], p.tag_list.to_a
+  end
 
   def test_tags_length
     p = Post.new :language_list => "english, french"

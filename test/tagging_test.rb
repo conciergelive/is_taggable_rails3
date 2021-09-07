@@ -1,38 +1,43 @@
 require 'test_helper'
 
-Expectations do
-  expect Tag do
+class TaggingTest < Minitest::Test
+  def teardown
+    Post.destroy_all
+    Tag.destroy_all
+  end
+
+  def test_tagging_relation
     t = Tagging.new :tag => Tag.new(:name => 'some_tag')
-    t.tag
+    assert_equal Tag, t.tag.class
   end
   
-  expect Post do
+  def test_taggable
     t = Tagging.new :taggable => Post.new
-    t.taggable
+    assert_equal Post, t.taggable.class
   end
   
-  expect 2 do
+  def test_taggings_count
     2.times { Post.create(:tag_list => "interesting") }
-    Tag.find_by_name("interesting").taggings.count
+    assert_equal 2, Tag.find_by_name("interesting").taggings.count
   end
   
-  expect 1 do
+  def test_taggings_by_name
     p1 = Post.create(:tag_list => "witty")
     p2 = Post.create(:tag_list => "witty")
     
     p2.destroy
-    Tag.find_by_name("witty").taggings.count
+    assert_equal 1, Tag.find_by_name("witty").taggings.count
   end  
 
-  expect 2 do
+  def test_taggings_by_tag_list
     p1 = Post.create(:tag_list => "smart, pretty")
-    p1.taggings.count
+    assert_equal 2, p1.taggings.count
   end
 
-  expect 1 do
+  def test_remove_tagging_through_tag
     p1 = Post.create(:tag_list => "mildly, inappropriate")
 
     Tag.find_by_name('inappropriate').destroy
-    p1.taggings.count
+    assert_equal 1, p1.taggings.count
   end  
 end
