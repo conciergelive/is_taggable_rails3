@@ -35,9 +35,11 @@ class TagTest < Minitest::Test
     assert_equal String, m.is_a?(Array) ? m.first.class : m.class
   end
 
-  def test_find_or_initialize_with_name_like_and_kind
-    tag = Tag.create!(:name => "iamawesome", :kind => "awesomestuff")
-    assert_equal tag.id, Tag.find_or_initialize_with_name_like_and_kind("iaMawesome", "awesomestuff").id
+  def test_same_text_different_case
+    tag1 = Tag.create!(:name => "iamawesome", :kind => "awesomestuff")
+    tag2 = Tag.create!(:name => "iaMawesome", :kind => "awesomestuff")
+    assert_equal tag1.id, Tag.find_or_initialize_with_name_like_and_kind("iamawesome", "awesomestuff").id
+    assert_equal tag2.id, Tag.find_or_initialize_with_name_like_and_kind("iaMawesome", "awesomestuff").id
   end
 
   def test_creating_and_finding_tag
